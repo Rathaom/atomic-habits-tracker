@@ -1,0 +1,51 @@
+:root {
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light-theme {
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #f1f5f9;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  
+  --color-accent: #0284c7;
+  --color-accent-hover: #0369a1;
+  --color-completed: #10b981;
+  --color-completed-bg: #e6f4ea;
+  --color-pending: #64748b;
+  --color-pending-bg: #f1f5f9;
+  --color-skipped: #f59e0b;
+  --color-skipped-bg: #fef3c7;
+  --color-missed: #ef4444;
+  --color-missed-bg: #fee2e2;
+  
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.dark-theme {
+  --bg-main: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #475569;
+  
+  --color-accent: #38bdf8;
+  --color-accent-hover: #7dd3fc;
+  --color-completed: #34d399;
+  --color-completed-bg: rgba(52, 211, 153, 0.15);
+  --color-pending: #94a3b8;
+  --color-pending-bg: rgba(148, 163, 184, 0.15);
+  --color-skipped: #fbbf24;
+  --color-skipped-bg: rgba(251, 191, 36, 0.15);
+  --color-missed: #f87171;
+  --color-missed-bg: rgba(248, 113, 113, 0.15);
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
