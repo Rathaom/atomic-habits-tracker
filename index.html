@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atomic Habits Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="theme-color" content="#0f172a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">⚛️</div>
+        <h1>Atomic Habits</h1>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-target="habits-panel">✨ Habits</button>
+        <button class="nav-btn" data-target="calendar-panel">📅 Calendar</button>
+        <button class="nav-btn" data-target="dashboard-panel">📊 Dashboard</button>
+        <button class="nav-btn" data-target="settings-panel">⚙️ Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="theme-toggle-btn" class="secondary-btn">🌓 Toggle Theme</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="progress-container">
+          <div class="progress-text-group">
+            <span class="progress-label">Today's Progress</span>
+            <span id="global-progress-pct" class="progress-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="global-progress-bar" class="progress-fill"></div>
+          </div>
+        </div>
+        <div class="counter-grid">
+          <div class="counter-card total"><span class="counter-val" id="count-total">0</span><span class="counter-lbl">Total</span></div>
+          <div class="counter-card completed"><span class="counter-val" id="count-completed">0</span><span class="counter-lbl">Done</span></div>
+          <div class="counter-card pending"><span class="counter-val" id="count-pending">0</span><span class="counter-lbl">Pending</span></div>
+          <div class="counter-card skipped"><span class="counter-val" id="count-skipped">0</span><span class="counter-lbl">Skipped</span></div>
+        </div>
+      </header>
+
+      <section id="habits-panel" class="app-panel active">
+        <div class="panel-action-header">
+          <div class="filter-controls">
+            <input type="text" id="search-input" placeholder="Search habits..." class="form-input">
+            <select id="filter-status" class="form-select">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="skipped">Skipped</option>
+              <option value="archived">Archived</option>
+            </select>
+            <select id="filter-category" class="form-select">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+          <button id="open-add-modal-btn" class="primary-btn">+ Add Habit</button>
+        </div>
+
+        <div id="habits-container" class="habits-grid">
+          </div>
+        <div id="habits-empty-state" class="empty-state hidden">
+          <div class="empty-icon">🌱</div>
+          <h3>Clear minds, clean slates</h3>
+          <p>No habits match your filters. Create a micro-habit to kickstart your streak today!</p>
+        </div>
+      </section>
+
+      <section id="calendar-panel" class="app-panel">
+        <div class="calendar-controls">
+          <div class="toggle-group">
+            <button id="toggle-weekly-btn" class="toggle-btn active">Weekly Strip</button>
+            <button id="toggle-monthly-btn" class="toggle-btn">Monthly Grid</button>
+          </div>
+          <div class="calendar-nav-group">
+            <button id="cal-prev-btn" class="secondary-btn">◀ Prev</button>
+            <span id="calendar-title" class="calendar-title"></span>
+            <button id="cal-next-btn" class="secondary-btn">Next ▶</button>
+          </div>
+        </div>
+        
+        <div id="weekly-view-container" class="calendar-card-view"></div>
+        <div id="monthly-view-container" class="calendar-month-grid hidden"></div>
+      </section>
+
+      <section id="dashboard-panel" class="app-panel">
+        <div class="charts-dashboard-grid">
+          <div class="chart-card"><h3 class="chart-title">Status Breakdown (Today)</h3><canvas id="chart-status-donut"></canvas></div>
+          <div class="chart-card"><h3 class="chart-title">Daily Performance History</h3><canvas id="chart-completions-bar"></canvas></div>
+          <div class="chart-card"><h3 class="chart-title">Streak Progression Trend</h3><canvas id="chart-streaks-line"></canvas></div>
+          <div class="chart-card"><h3 class="chart-title">Performance by Category</h3><canvas id="chart-categories-bar"></canvas></div>
+        </div>
+      </section>
+
+      <section id="settings-panel" class="app-panel">
+        <div class="settings-layout">
+          <div class="settings-card">
+            <h3>Audio & Notifications</h3>
+            <div class="settings-row">
+              <label for="mute-sound-toggle">Mute App Audio Cue</label>
+              <input type="checkbox" id="mute-sound-toggle" class="custom-switch">
+            </div>
+            <div class="settings-row">
+              <button id="request-push-perm-btn" class="secondary-btn">Request Browser Notification Access</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>Data Administration</h3>
+            <p class="settings-desc">Export your atomic habits data schema instantly into raw Excel syntax formats containing history blocks.</p>
+            <button id="export-excel-btn" class="primary-btn success-color">📥 Export to Excel (.xlsx)</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-bottom-bar">
+      <button class="mobile-nav-btn active" data-target="habits-panel"><span class="icon">✨</span><span class="lbl">Habits</span></button>
+      <button class="mobile-nav-btn" data-target="calendar-panel"><span class="icon">📅</span><span class="lbl">Calendar</span></button>
+      <button class="mobile-nav-btn" data-target="dashboard-panel"><span class="icon">📊</span><span class="lbl">Charts</span></button>
+      <button class="mobile-nav-btn" data-target="settings-panel"><span class="icon">⚙</span><span class="lbl">Settings</span></button>
+    </nav>
+  </div>
+
+  <div id="habit-modal" class="modal-overlay hidden">
+    <div class="modal-surface">
+      <header class="modal-header">
+        <h2 id="modal-view-title">Add New Habit</h2>
+        <button id="close-modal-btn" class="modal-close-x">&times;</button>
+      </header>
+      <form id="habit-mutation-form" class="modal-form-body">
+        <input type="hidden" id="form-habit-id">
+        
+        <div class="form-element">
+          <label for="form-habit-name">Habit Name *</label>
+          <input type="text" id="form-habit-name" required class="form-input" placeholder="E.g., Read 10 Pages">
+        </div>
+
+        <div class="form-grid-2x2">
+          <div class="form-element">
+            <label for="form-habit-category">Category</label>
+            <input type="text" id="form-habit-category" class="form-input" placeholder="Health, Work, Personal...">
+          </div>
+          <div class="form-element">
+            <label for="form-habit-duedate">Due Date</label>
+            <input type="date" id="form-habit-duedate" required class="form-input">
+          </div>
+          <div class="form-element">
+            <label for="form-habit-remindertime">Reminder Time</label>
+            <input type="time" id="form-habit-remindertime" class="form-input">
+          </div>
+          <div class="form-element" id="form-status-container">
+            <label for="form-habit-status">Status</label>
+            <select id="form-habit-status" class="form-select">
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="skipped">Skipped</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-element hidden" id="completed-at-container">
+          <label for="form-habit-completedat">Completion Log Time</label>
+          <input type="datetime-local" id="form-habit-completedat" class="form-input">
+        </div>
+
+        <div class="form-element">
+          <label for="form-habit-note">Note / Intention Statement</label>
+          <textarea id="form-habit-note" rows="3" class="form-input" placeholder="Make it obvious, attractive, easy, and satisfying..."></textarea>
+        </div>
+
+        <div id="habit-stats-summary" class="modal-stats-tray hidden">
+          <div class="stat-badge">🔥 Current Streak: <span id="lbl-modal-curr-streak">0</span> days</div>
+          <div class="stat-badge">🏆 Best Streak: <span id="lbl-modal-best-streak">0</span> days</div>
+          <div class="stat-badge">📈 Compliance Rate: <span id="lbl-modal-compliance">0%</span></div>
+        </div>
+
+        <footer class="modal-footer-actions">
+          <button type="button" id="delete-habit-btn" class="danger-btn hidden">Delete Habit</button>
+          <button type="button" id="archive-habit-btn" class="secondary-btn hidden">Archive</button>
+          <div class="right-cluster">
+            <button type="button" id="cancel-modal-btn" class="secondary-btn">Cancel</button>
+            <button type="submit" id="save-habit-btn" class="primary-btn">Save Habit</button>
+          </div>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <div id="day-breakdown-modal" class="modal-overlay hidden">
+    <div class="modal-surface compact">
+      <header class="modal-header">
+        <h2 id="day-breakdown-title">Day History Breakdown</h2>
+        <button id="close-breakdown-modal-btn" class="modal-close-x">&times;</button>
+      </header>
+      <div id="day-breakdown-content" class="breakdown-list-box"></div>
+    </div>
+  </div>
+
+  <div id="toast-dock" class="toast-dock"></div>
+</body>
+</html>
